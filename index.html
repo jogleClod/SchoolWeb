@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400;1,700&family=El+Messiri:wght@400..700&display=swap" rel="stylesheet">
+
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - Название сайта</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="include-header"></div>
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero animate-slide">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h2 data-i18n="mainTitle" >Успешный путь вашему ребенку!</h2>
+                    <p data-i18n="mainDesc">Средная школа №99 предлагает качественный обучение вашему ребенку </p>
+                    <a data-i18n="more" href="about.html" class="btn">Узнать больше</a>
+                </div>
+                <img class="hero-img" src="img/schImg/img1.png" alt="Изображение">
+            </div>
+        </section>
+
+        <section class="about-school animate-fade" >
+            <div class="about-container">
+                <div class="about-image">
+                    <img src="img/schImg/img2.png" alt="Фото школы">
+                </div>
+                <div class="about-text">
+                    <h2 data-i18n="about">О нашей школе</h2>
+                    <p data-i18n="aboutDesc">Средняя школа №99 имени Нисана Сайдиева — государственное общеобразовательное учреждение, расположенное в селе Тулейкен Кара-Суйского района Ошской области Кыргызской Республики.
+
+                        Школа предлагает качественное образование для учащихся с 1 по 11 классы, формируя у подрастающего поколения не только академические знания, но и гражданскую ответственность, патриотизм, уважение к культуре и традициям родного края.
+                        
+                        Учебное заведение было зарегистрировано в 2017 году и с тех пор стабильно развивается, внедряя современные методы обучения и обеспечивая благоприятные условия для роста и развития учащихся.
+                        
+                        </p>
+                    
+                    <a data-i18n="aboutBtn" href="about.html" class="btn">Подробнее о школе</a>
+                </div>
+            </div>
+        </section>
+        
+
+        <section class="features animate-slide" >
+            <div class="feature-card">
+                <h3 data-i18n="navNews">Новости</h3>
+                <p data-i18n="newsDesc">Следите за последними событиями.</p>
+                <a data-i18n="more" href="news.html">Читать →</a>
+            </div>
+            <div class="feature-card">
+                <h3 data-i18n="navTeachers">Преподаватели</h3>
+                <p data-i18n="teachersDesc">Наши опытные педагоги.</p>
+                <a data-i18n="more" href="teachers.html">Подробнее →</a>
+            </div>
+            <div class="feature-card">
+                <h3 data-i18n="studentTitle" >Наши ученики</h3>
+                <p data-i18n="studentDesc">Посмотрите на наших выдающих учеников!</p>
+                <a data-i18n="more" href="students.html">Перейти →</a>
+            </div>
+        </section>
+
+        <section class="advantages" >
+            <h2 data-i18n="advantages">Наши преимущества</h2>
+            <div class="advantages-container">
+                <!-- Колонка 1 -->
+                <div class="advantage-card animate-slide delay-1">
+                    <div class="advantage-icon">
+                        <img src="/img/imgTeacher.png" alt="Опытные преподаватели">
+                    </div>
+                    <h3 data-i18n="advTeacher">Опытные преподаватели</h3>
+                    <p data-i18n="advTeacherDesc">Наши педагоги — эксперты с 10+ летним стажем, авторы учебных программ и призеры конкурсов.</p>
+                </div>
+        
+                <!-- Колонка 2 -->
+                <div class="advantage-card animate-slide delay-2" >
+                    <div class="advantage-icon">
+                        <img src="img/imgFuEdu.png" alt="Современное обучение">
+                    </div>
+                    <h3 data-i18n="advModern">Современное обучение</h3>
+                    <p data-i18n="advModernDesc">Используем интерактивные доски, VR-лаборатории и онлайн-платформы для immersive-обучения.</p>
+                </div>
+        
+                <!-- Колонка 3 -->
+                <div  class="advantage-card animate-slide delay-3" 3>
+                    <div class="advantage-icon">
+                        <img src="img/imgAdvan.png" alt="Комфортные кабинеты">
+                    </div>
+                    <h3 data-i18n="advComfort">Комфортные кабинеты</h3>
+                    <p data-i18n="advComfortDesc">Просторные аудитории с эргономичной мебелью, кондиционерами и зонами отдыха.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="include-footer"></div>
+
+    <script src="js/include.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/anim.js"></script>
+    <script src="js/initLanguageSelect.js"></script>
+    <script src="js/hamburgerMenu.js"></script>
+
+    
+    
+
+<script>
+   window.addEventListener('DOMContentLoaded', () => {
+  const checkLogo = setInterval(() => {
+    const logo = document.getElementById('logo');
+    if (logo) {
+      clearInterval(checkLogo);
+
+      let logoPressTimer;
+
+      logo.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        logoPressTimer = setTimeout(() => {
+          window.location.href = '/admin-login.html';
+        }, 3000);
+      });
+
+      logo.addEventListener('touchend', () => clearTimeout(logoPressTimer));
+      logo.addEventListener('touchcancel', () => clearTimeout(logoPressTimer));
+    }
+  }, 100);
+});
+
+  </script>
+  
+   
+</body>
+</html>

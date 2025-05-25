@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель</title>
+    <!-- Иконки Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/adminPage.css">
+</head>
+<body>
+    <!-- Header будет вставлен сюда -->
+    <div id="include-header"></div>
+    
+    <!-- Admin Panel -->
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <h3>Админ панель</h3>
+            <ul class="admin-menu">
+                <li><a href="#" data-i18n="adminTitle" class="active"><i class="fas fa-newspaper"></i> Жаңылыктар</a></li>
+                <!-- <li><a href="#"><i class="fas fa-users"></i> Колдонуучулар</a></li>
+                <li><a href="#"><i class="fas fa-chalkboard-teacher"></i> Мугалимдер</a></li>
+                <li><a href="#"><i class="fas fa-user-graduate"></i> Окуучулар</a></li>
+                <li><a href="#"><i class="fas fa-calendar-alt"></i> Иш-чаралар</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> Настройки</a></li> -->
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="admin-header">
+                <h2>
+                    <i class="fas fa-newspaper"></i>
+                    <span data-i18n="adminTitle">Жаңылыктарды башкаруу</span> </h2>
+                <button class="btn btn-add" id="addNewsBtn">
+                    <i class="fas fa-plus"></i>
+                    <span data-i18n="adminNewNews">Жаңы жаңылык</span> 
+                </button>
+            </div>
+            
+            <!-- News Table -->
+            <table class="news-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th data-i18n="adminImage">Сүрөт</th>
+                        <th data-i18n="adminDesc">Аталышы</th>
+                        <th>Дата</th>
+                        <th>Категория</th>
+                        <th data-i18n="adminAction">Аракеттер</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><img src="img/news/news1.png" alt="News" style="width: 60px; height: 40px; object-fit: cover;"></td>
+                        <td>Республикалык олимпиадада ийгилик</td>
+                        <td>15.03.2024</td>
+                        <td>Жетишкендиктер</td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn btn-edit"><i class="fas fa-edit"></i> Түзөтүү</button>
+                                <button class="btn btn-delete"><i class="fas fa-trash"></i> Өчүрүү</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><img src="img/news/news2.png" alt="News" style="width: 60px; height: 40px; object-fit: cover;"></td>
+                        <td>Жаңы спорт комплекси ачылды</td>
+                        <td>03.03.2024</td>
+                        <td>Иш-чаралар</td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn btn-edit"><i class="fas fa-edit"></i> Түзөтүү</button>
+                                <button class="btn btn-delete"><i class="fas fa-trash"></i> Өчүрүү</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><img src="img/news/news3.png" alt="News" style="width: 60px; height: 40px; object-fit: cover;"></td>
+                        <td>Мугалимдер күнүнө арналган концерт</td>
+                        <td>27.02.2024</td>
+                        <td>Иш-чаралар</td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn btn-edit"><i class="fas fa-edit"></i> Түзөтүү</button>
+                                <button class="btn btn-delete"><i class="fas fa-trash"></i> Өчүрүү</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+    
+    <div class="modal" id="newsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle" data-i18n="adminModalTitle">Жаңы жаңылык кошуу</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newsForm">
+                    <div class="form-group">
+                        <label for="newsTitle" data-i18n="adminDesc">Аталышы:</label>
+                        <input type="text" id="newsTitle" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newsCategory">Категория:</label>
+                        <select id="newsCategory" class="form-control" required>
+                            <option data-i18n="adminModalChoosCat" value="">Категорияны тандаңыз</option>
+                            <option data-i18n="newsP2" value="Окуу процесси">Окуу процесси</option>
+                            <option data-i18n="newsP3" value="Иш-чаралар">Иш-чаралар</option>
+                            <option  value="Спорт">Спорт</option>
+                            <option data-i18n="newsP4" value="Жетишкендиктер">Жетишкендиктер</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newsDate">Дата:</label>
+                        <input type="date" id="newsDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newsImage" data-i18n="adminImage">Сүрөт:</label>
+                        <input type="file" id="newsImage" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="newsContent"data-i18n="adminModalName" >Мазмуну:</label>
+                        <textarea id="newsContent" class="form-control" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancelBtn" data-i18n="adminModalCancel">Жокко чыгаруу</button>
+                <button class="btn btn-add" id="saveNewsBtn" data-i18n="adminModalSave">Сактоо</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer будет вставлен сюда -->
+    
+    <!-- Скрипт для загрузки header и footer -->
+    <script>
+        function getRootRelativePath(path) {
+            const depth = window.location.pathname.split('/').length - 2;
+            return '../'.repeat(depth) + path;
+        }
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            // Загружаем header
+            fetch(getRootRelativePath("header.html"))
+                .then(res => res.text())
+                .then(data => {
+                    document.querySelector("#include-header").innerHTML = data;
+                });
+            
+            // Загружаем footer
+            fetch(getRootRelativePath("footer.html"))
+                .then(res => res.text())
+                .then(data => {
+                    document.querySelector("#include-footer").innerHTML = data;
+                });
+            
+            // Модальное окно для новостей
+            const modal = document.getElementById('newsModal');
+            const addNewsBtn = document.getElementById('addNewsBtn');
+            const closeModal = document.querySelector('.close-modal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            // Открыть модальное окно
+            addNewsBtn.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                document.getElementById('modalTitle').textContent = 'Жаңы жаңылык кошуу';
+                document.getElementById('newsForm').reset();
+            });
+            
+            // Закрыть модальное окно
+            function closeNewsModal() {
+                modal.style.display = 'none';
+            }
+            
+            closeModal.addEventListener('click', closeNewsModal);
+            cancelBtn.addEventListener('click', closeNewsModal);
+            
+            // Закрыть при клике вне модального окна
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeNewsModal();
+                }
+            });
+            
+            // Сохранить новость (заглушка)
+            document.getElementById('saveNewsBtn').addEventListener('click', () => {
+                alert('Жаңылык ийгиликтүү сакталды!');
+                closeNewsModal();
+            });
+            
+            // Обработчики для кнопок редактирования и удаления
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('modalTitle').textContent = 'Жаңылыкты түзөтүү';
+                    // Здесь можно загрузить данные новости в форму
+                    modal.style.display = 'flex';
+                });
+            });
+            
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (confirm('Бул жаңылыкты чын эле өчүрүүнү каалайсызбы?')) {
+                        alert('Жаңылык ийгиликтүү өчүрүлдү!');
+                    }
+                });
+            });
+        });
+    </script>
+
+<script src="/js/translations.js"></script>
+<script src="/js/initLanguageSelect.js"></script>
+<script src="js/hamburgerMenu.js"></script>
+
+</body>
+</html>
