@@ -5,7 +5,6 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 const cors = require('cors');
-app.use(cors());
 
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
@@ -16,13 +15,6 @@ cloudinary.config({
   api_key: '188289595742432',           // замени на свое
   api_secret: 'abTsWlbv-pxuJaQqhg_pyKKhQQk'      // замени на свое
 });
-
-
-
-
-
-// В server.js (Node.js)
-
 // Настройки CORS для разработки
 app.use(cors({
     origin: ['https://n-saidiev-xd5k.onrender.com'], // Разрешаем оба варианта
@@ -266,7 +258,6 @@ app.delete('/api/students/:id', async (req, res) => {
 });
 app.put('/api/students/:id', upload.single('image'), async (req, res) => {
   try {
-    // Валидация ID
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: 'Неверный ID студента' });
     }
@@ -279,18 +270,14 @@ app.put('/api/students/:id', upload.single('image'), async (req, res) => {
       badges: req.body.badges ? req.body.badges.split(',').map(b => b.trim()) : [],
     };
 
-    // Если есть новое изображение
     if (req.file) {
-      updateData.image = req.file.filename;
-      
-      // Опционально: удаляем старое изображение
-      
+      updateData.image = req.file.path; // Используем path от Cloudinary
     }
 
     const updatedStudent = await Students.findByIdAndUpdate(
       req.params.id,
       updateData,
-      { new: true, runValidators: true }
+      { new: true }
     );
 
     if (!updatedStudent) {
@@ -299,10 +286,10 @@ app.put('/api/students/:id', upload.single('image'), async (req, res) => {
 
     res.json(updatedStudent);
   } catch (err) {
-    console.error('Ошибка обновления студента:', err);
+    console.error('Ошибка обновления:', err);
     res.status(500).json({ 
-      error: 'Ошибка сервера',
-      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+      error: 'Server error',
+      details: err.message
     });
   }
 });

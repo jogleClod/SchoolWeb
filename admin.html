@@ -664,25 +664,35 @@ function renderStudents(students) {
     btn.addEventListener('click', () => deleteStudent(btn.dataset.id));
   });
 }
-
-// Редактирование студента
 async function editStudent(id) {
   const API_BASE_URL = 'https://n-saidiev.onrender.com';
 
   try {
-    console.log('Fetching student with ID:', id); // Логирование
+    console.log('Fetching student with ID:', id);
     
-    const response = await fetch(`${API_BASE_URL}/api/students/${id}`);
+    const response = await fetch(`${API_BASE_URL}/api/students/${id}`, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    
+    // Проверяем Content-Type перед парсингом
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      throw new Error(`Ожидался JSON, получено: ${text.substring(0, 100)}...`);
+    }
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      throw new Error(errorData?.error || 'Ошибка загрузки');
+      throw new Error(errorData?.error || `HTTP error! status: ${response.status}`);
     }
     
     const student = await response.json();
-    console.log('Received student data:', student); // Логирование
+    console.log('Received student data:', student);
     
-    // Заполняем форму
+    // Заполнение формы остается без изменений
     document.getElementById('studentName').value = student.name;
     document.getElementById('studentClass').value = student.class;
     document.getElementById('studentAchievements').value = student.achievements;
