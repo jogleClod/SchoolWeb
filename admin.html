@@ -619,6 +619,8 @@ async function loadStudents() {
 
 // Отображение студентов
 function renderStudents(students) {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
+
   studentsGrid.innerHTML = students.map(student => `
     <div class="student-card" data-id="${student._id}">
       <div class="student-image">

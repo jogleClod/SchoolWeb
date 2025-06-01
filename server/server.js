@@ -14,7 +14,7 @@ const multer = require('multer');
 
 // Настройки CORS для разработки
 app.use(cors({
-    origin: ['http://localhost:5500', 'http://127.0.0.1:5500'], // Разрешаем оба варианта
+    origin: ['https://n-saidiev-xd5k.onrender.com'], // Разрешаем оба варианта
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type']
   }));
