@@ -15,6 +15,18 @@ cloudinary.config({
   api_key: '188289595742432',           // замени на свое
   api_secret: 'abTsWlbv-pxuJaQqhg_pyKKhQQk'      // замени на свое
 });
+// Логируем каждый запрос
+app.use((req, res, next) => {
+  console.log(`\n[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  if (req.method !== 'GET') {
+    console.log('  Body:', req.body);
+    if (req.headers['content-type'] && req.headers['content-type'].startsWith('multipart/form-data')) {
+      console.log('  (Ожидается файл)');
+    }
+  }
+  next();
+});
+
 // Настройки CORS для разработки
 app.use(cors({
     origin: ['https://n-saidiev-xd5k.onrender.com'], // Разрешаем оба варианта
@@ -99,7 +111,7 @@ app.post('/api/news', upload.single('image'), async (req, res) => {
       content: req.body.content,
       category: req.body.category,
       date: req.body.date || new Date(),
-      image: req.file?.filename
+      image: req.file?.path
     });
     await news.save();
     res.status(201).json(news);
@@ -179,9 +191,9 @@ app.get('/api/teachers/:id', async (req, res) => {
 
 // Добавление преподавателя
 app.post('/api/teachers', upload.single('photo'), async (req, res) => {
-  console.log('Получен запрос на добавление преподавателя');
-  console.log('Тело запроса:', req.body);
-  console.log('Файл:', req.file);
+  console.log('📥 POST /api/teachers');
+  console.log('➡️ req.body:', req.body);
+  console.log('🖼 req.file:', req.file); // вот здесь будет вся информация от Cloudinary
   
   try {
     const teacher = new Teacher({
@@ -230,7 +242,11 @@ app.get('/api/students/:id', async (req, res) => {
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });
+
 app.post('/api/students', upload.single('image'), async (req, res) => {
+  console.log('📥 POST /api/students');
+  console.log('➡️ req.body:', req.body);
+  console.log('🖼 req.file:', req.file); // вот здесь будет вся информация от Cloudinary
   try {
     const newStudent = new Students({
       name: req.body.name,
@@ -238,7 +254,7 @@ app.post('/api/students', upload.single('image'), async (req, res) => {
       achievements: req.body.achievements,
       description: req.body.description,
       badges: req.body.badges ? req.body.badges.split(',').map(b => b.trim()) : [],
-      image: req.file ? req.file.filename : null
+      image: req.file?.path
     });
 
     await newStudent.save();
