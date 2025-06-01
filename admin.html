@@ -241,8 +241,7 @@
 </script>
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
-          const API_BASE_URL = 'http://localhost:5501';
-        
+                  
           const modal = document.getElementById('newsModal');
           const newsForm = document.getElementById('newsForm');
           const addNewsBtn = document.getElementById('addNewsBtn');
@@ -427,8 +426,7 @@ function closeTeacherModal() {
 
 async function loadTeachers() {
     try {
-      const API_BASE_URL = 'http://localhost:5501';
-        const response = await fetch(`${API_BASE_URL}/api/teachers`);
+              const response = await fetch(`${API_BASE_URL}/api/teachers`);
         if (!response.ok) throw new Error('Network error');
         
         const teachers = await response.json();
@@ -475,8 +473,7 @@ async function editTeacher(id) {
             throw new Error('Неверный ID преподавателя');
         }
 
-        const API_BASE_URL = 'http://localhost:5501';
-        const url = `${API_BASE_URL}/api/teachers/${encodeURIComponent(id)}`;
+                const url = `${API_BASE_URL}/api/teachers/${encodeURIComponent(id)}`;
         
         console.log('Отправка запроса по URL:', url);
         
@@ -514,8 +511,7 @@ async function editTeacher(id) {
 }
 
 async function deleteTeacher(id) {
-  const API_BASE_URL = 'http://localhost:5501';
-
+  
     if (!confirm('Бул мугалимди чынымен өчүрүүнү каалайсызбы?')) return;
     
     try {
@@ -544,8 +540,7 @@ teacherModal.addEventListener('click', (e) => {
 });
 
 saveTeacherBtn.addEventListener('click', async () => {
-  const API_BASE_URL = 'http://localhost:5501';
-
+  
     const formData = new FormData();
     formData.append('name', document.getElementById('teacherName').value);
     formData.append('subject', document.getElementById('teacherSubject').value);
@@ -657,7 +652,6 @@ function renderStudents(students) {
     btn.addEventListener('click', () => deleteStudent(btn.dataset.id));
   });
 }
-const API_BASE_URL = 'http://localhost:5501';
 
 // Редактирование студента
 async function editStudent(id) {

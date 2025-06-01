@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const API_BASE_URL = 'http://localhost:5501';
+    const API_BASE_URL = 'https://n-saidiev.onrender.com';
     let currentNewsId = null;
     let currentTeacherId = null;
 
