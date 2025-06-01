@@ -89,7 +89,8 @@
               article.className = 'news-card';
               article.innerHTML = `
                 <div class="news-image">
-                  <img src="${SERVER_URL}/uploads/${news.image}" alt="${news.title}" />
+                 <img src="${news.image ? news.image : 'img/default-news.png'}" alt="${news.title}" />
+
                 </div>
                 <div class="news-content">
                   <span class="news-category">${news.category}</span>

@@ -70,7 +70,8 @@
                 
                 card.innerHTML = `
                     <div class="student-image">
-                        <img src="${student.image ? `${API_BASE_URL}/uploads/${student.image}` : 'img/default-student.png'}" 
+                        <img src="${student.image ? student.image : 'img/default-student.png'}" alt="student" />
+
                              alt="${student.name}"
                              width="200"
                              height="200">

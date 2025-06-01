@@ -8,6 +8,17 @@ const cors = require('cors');
 app.use(cors());
 
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+cloudinary.config({
+  cloud_name: 'CLOUD_NAME',     // замени на свое
+  api_key: 'API_KEY',           // замени на свое
+  api_secret: 'API_SECRET'      // замени на свое
+});
+
+
+
 
 
 // В server.js (Node.js)
@@ -67,11 +78,15 @@ app.get('/api/students', async (req, res) => {
 
 
 // Настройка загрузки файлов
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'school_uploads',  // папка в Cloudinary
+    allowed_formats: ['jpg', 'jpeg', 'png'],
+  },
 });
-const upload = multer({ storage });
+const upload = multer({ storage: storage });
+
 
 // API Endpoints
 app.get('/api/news', async (req, res) => {

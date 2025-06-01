@@ -86,7 +86,8 @@
                 item.classList.add('teacher-item');
         
                 item.innerHTML = `
-                  <img src="${API_BASE_URL}/uploads/${teacher.photo}" alt="${teacher.name}">
+             <img src="${teacher.photo ? teacher.photo : 'img/default-teacher.png'}" alt="${teacher.name}">
+
                   <div class="teacher-details">
                     <h3>${teacher.name}</h3>
                     <p><span>Стаж:</span> ${teacher.experience}</p>
