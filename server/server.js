@@ -72,10 +72,11 @@ app.get('/api/students', async (req, res) => {
 // Настройка загрузки файлов
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: 'school_uploads',  // папка в Cloudinary
-    allowed_formats: ['jpg', 'jpeg', 'png'],
-  },
+  params: (req, file) => ({
+    folder: 'school_uploads',
+    format: 'jpg',
+    public_id: `${Date.now()}-${file.originalname}`
+  })
 });
 const upload = multer({ storage: storage });
 
@@ -189,7 +190,7 @@ app.post('/api/teachers', upload.single('photo'), async (req, res) => {
       bio: req.body.bio,
       experience: req.body.experience,
       education: req.body.education,
-      photo: req.file?.filename
+      photo: req.file?.path 
     });
     
     await teacher.save();

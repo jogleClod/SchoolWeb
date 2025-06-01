@@ -711,45 +711,60 @@ async function editStudent(id) {
     alert(`Түзөтүү мүмкүн болбоду: ${error.message}`);
   }
 }
-
-// Сохранение студента
 saveStudentBtn.addEventListener('click', async () => {
   const API_BASE_URL = 'https://n-saidiev.onrender.com';
 
+  // Валидация полей
+  if (!document.getElementById('studentName').value) {
+    alert('Введите имя студента');
+    return;
+  }
 
-  const formData = new FormData();
-  formData.append('name', document.getElementById('studentName').value);
-  formData.append('class', document.getElementById('studentClass').value);
-  formData.append('achievements', document.getElementById('studentAchievements').value);
-  formData.append('description', document.getElementById('studentDescription').value);
-  formData.append('badges', document.getElementById('studentBadges').value);
-  
-  const imageFile = document.getElementById('studentImage').files[0];
-  if (imageFile) formData.append('image', imageFile);
-  
   try {
-    const url = currentStudentId 
-      ? `${API_BASE_URL}/api/students/${currentStudentId}`
-      : `${API_BASE_URL}/api/students`;
-    
-    const method = currentStudentId ? 'PUT' : 'POST';
-    
-    const response = await fetch(url, {
-      method,
-      body: formData
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Ошибка сохранения');
+    const formData = new FormData();
+    formData.append('name', document.getElementById('studentName').value);
+    formData.append('class', document.getElementById('studentClass').value);
+    formData.append('achievements', document.getElementById('studentAchievements').value);
+    formData.append('description', document.getElementById('studentDescription').value);
+    formData.append('badges', document.getElementById('studentBadges').value);
+
+    const imageFile = document.getElementById('studentImage').files[0];
+    if (imageFile) {
+      if (!imageFile.type.startsWith('image/')) {
+        throw new Error('Выберите файл изображения (JPG/PNG)');
+      }
+      formData.append('image', imageFile);
     }
+
+    const response = await fetch(
+      currentStudentId 
+        ? `${API_BASE_URL}/api/students/${currentStudentId}`
+        : `${API_BASE_URL}/api/students`,
+      {
+        method: currentStudentId ? 'PUT' : 'POST',
+        body: formData
+      }
+    );
+
+    const text = await response.text();
+    let data;
     
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(`Сервер вернул невалидный JSON: ${text.substring(0, 100)}`);
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Неизвестная ошибка сервера');
+    }
+
     studentModal.style.display = 'none';
     loadStudents();
     
   } catch (error) {
-    console.error('Полная ошибка сохранения:', error);
-    alert(`Ошибка: ${error.message}`);
+    console.error('Ошибка:', error);
+    alert(`Ошибка сохранения: ${error.message}`);
   }
 });
 
