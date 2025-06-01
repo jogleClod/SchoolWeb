@@ -472,6 +472,8 @@ async function loadTeachers() {
     }
 }
 async function editTeacher(id) {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
+
     try {
         if (!id || typeof id !== 'string') {
             throw new Error('Неверный ID преподавателя');
@@ -515,6 +517,7 @@ async function editTeacher(id) {
 }
 
 async function deleteTeacher(id) {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
   
     if (!confirm('Бул мугалимди чынымен өчүрүүнү каалайсызбы?')) return;
     
@@ -544,6 +547,7 @@ teacherModal.addEventListener('click', (e) => {
 });
 
 saveTeacherBtn.addEventListener('click', async () => {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
   
     const formData = new FormData();
     formData.append('name', document.getElementById('teacherName').value);
@@ -663,6 +667,8 @@ function renderStudents(students) {
 
 // Редактирование студента
 async function editStudent(id) {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
+
   try {
     console.log('Fetching student with ID:', id); // Логирование
     
@@ -698,6 +704,9 @@ async function editStudent(id) {
 
 // Сохранение студента
 saveStudentBtn.addEventListener('click', async () => {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
+
+
   const formData = new FormData();
   formData.append('name', document.getElementById('studentName').value);
   formData.append('class', document.getElementById('studentClass').value);
@@ -736,6 +745,8 @@ saveStudentBtn.addEventListener('click', async () => {
 
 // Удаление студента
 async function deleteStudent(id) {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
+
   if (!confirm('Бул окуучуну чынымен өчүрүүнү каалайсызбы?')) return;
   
   try {
