@@ -42,8 +42,8 @@ const Teacher = mongoose.model('Teacher', {
   subject: String,
   bio: String,
   photo: String,
-  experience: String,     // ← добавлено
-  education: String       // ← добавлено
+  experience: String,   
+  education: String    
 });
 
 const Students = mongoose.model('Students', {
@@ -52,9 +52,8 @@ const Students = mongoose.model('Students', {
   achievements: String,
   description: String,
   badges: [String],
-  image: String // имя файла изображения      // ← добавлено
+  image: String
 });
-// Получение всех студентов
 app.get('/api/students', async (req, res) => {
   try {
     const students = await Students.find();
@@ -297,5 +296,5 @@ app.put('/api/students/:id', upload.single('image'), async (req, res) => {
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
-const PORT = 5501; 
-app.listen(PORT,'0.0.0.0', () => console.log(`Server running on http://localhost:${PORT}`));
+const PORT = process.env.PORT || 5501;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
