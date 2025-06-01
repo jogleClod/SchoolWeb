@@ -257,6 +257,8 @@
           }
         
           async function loadNews() {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
+
             try {
               const response = await fetch(`${API_BASE_URL}/api/news`);
               if (!response.ok) throw new Error('Network error');
@@ -425,6 +427,8 @@ function closeTeacherModal() {
 }
 
 async function loadTeachers() {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
+
     try {
               const response = await fetch(`${API_BASE_URL}/api/teachers`);
         if (!response.ok) throw new Error('Network error');
@@ -605,6 +609,8 @@ studentModal.addEventListener('click', (e) => {
 
 // Загрузка студентов
 async function loadStudents() {
+  const API_BASE_URL = 'https://n-saidiev.onrender.com';
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/students`);
     if (!response.ok) throw new Error('Ошибка загрузки');
