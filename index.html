@@ -116,29 +116,40 @@
     
     
 
-<script>
-   window.addEventListener('DOMContentLoaded', () => {
-  const checkLogo = setInterval(() => {
-    const logo = document.getElementById('logo');
-    if (logo) {
-      clearInterval(checkLogo);
-
-      let logoPressTimer;
-
-      logo.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        logoPressTimer = setTimeout(() => {
-          window.location.href = '/admin-login.html';
-        }, 3000);
-      });
-
-      logo.addEventListener('touchend', () => clearTimeout(logoPressTimer));
-      logo.addEventListener('touchcancel', () => clearTimeout(logoPressTimer));
-    }
-  }, 100);
-});
-
-  </script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+          const checkLogo = setInterval(() => {
+            const logo = document.getElementById('logo');
+            if (logo) {
+              clearInterval(checkLogo);
+        
+              let logoPressTimer;
+        
+              // Мобильные устройства
+              logo.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                logoPressTimer = setTimeout(() => {
+                  window.location.href = '/admin-login.html';
+                }, 3000);
+              });
+        
+              logo.addEventListener('touchend', () => clearTimeout(logoPressTimer));
+              logo.addEventListener('touchcancel', () => clearTimeout(logoPressTimer));
+        
+              // ПК (десктоп)
+              logo.addEventListener('mousedown', () => {
+                logoPressTimer = setTimeout(() => {
+                  window.location.href = '/admin-login.html';
+                }, 3000);
+              });
+        
+              logo.addEventListener('mouseup', () => clearTimeout(logoPressTimer));
+              logo.addEventListener('mouseleave', () => clearTimeout(logoPressTimer));
+            }
+          }, 100);
+        });
+        </script>
+        
   
    
 </body>

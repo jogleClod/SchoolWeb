@@ -1,0 +1,46 @@
+<form id="teacherForm" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="Имя" required />
+    <input type="text" name="subject" placeholder="Предмет" required />
+    <input type="text" name="experience" placeholder="Стаж" required />
+    <input type="text" name="education" placeholder="Образование" required />
+    <textarea name="bio" placeholder="Описание"></textarea>
+    <input type="file" name="photo" accept="image/*" required />
+    <button type="submit">Добавить преподавателя</button>
+  </form>
+  
+  <script>
+    document.getElementById('teacherForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      try {
+        const formData = new FormData(this);
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Отправка...';
+        
+        const response = await fetch('http://localhost:5501/api/teachers', {
+          method: 'POST',
+          body: formData
+          // Заголовок Content-Type НЕ нужно указывать для FormData!
+          // Браузер автоматически установит multipart/form-data с boundary
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Ошибка сервера');
+        }
+        
+        const data = await response.json();
+        alert(`Преподаватель ${data.teacher.name} успешно добавлен!`);
+        this.reset();
+        
+      } catch (error) {
+        console.error('Ошибка:', error);
+        alert(`Ошибка: ${error.message}`);
+      } finally {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Добавить преподавателя';
+      }
+    });
+  </script>
