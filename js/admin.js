@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
             tbody.innerHTML = news.map(item => `
                 <tr>
                     <td>${item._id}</td>
-                    <td>${item.image ? `<img src="${news.image}" style="width:60px;height:40px;object-fit:cover;">` : 'Нет фото'}</td>
+                    <td>${item.image ? `<img src="${item.image}" style="width:60px;height:40px;object-fit:cover;">` : 'Нет фото'}</td>
                     <td>${item.title}</td>
                     <td>${new Date(item.date).toLocaleDateString()}</td>
                     <td>${item.category}</td>
@@ -230,30 +230,53 @@ async function saveTeacher() {
     }
 }
 
-    async function editNews(id) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/news/${id}`);
-            if (!response.ok) throw new Error('Ошибка загрузки новости');
-            
-            const newsItem = await response.json();
-            
-            // Заполняем форму
-            document.getElementById('newsTitle').value = newsItem.title;
-            document.getElementById('newsCategory').value = newsItem.category;
-            document.getElementById('newsDate').value = newsItem.date.split('T')[0];
-            document.getElementById('newsContent').value = newsItem.content;
-            currentNewsId = id;
-            
-            // Показываем модальное окно
-            document.getElementById('newsModalTitle').textContent = 'Жаңылыкты түзөтүү';
-            document.getElementById('newsModal').style.display = 'flex';
-            
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Ошибка при редактировании новости');
+async function editNews(id) {
+    try {
+      if (!id) throw new Error('ID новости не указан');
+  
+      console.log('Пытаемся загрузить новость с ID:', id);
+      
+      const response = await fetch(`${API_BASE_URL}/api/news/${id}`, {
+        headers: {
+          'Accept': 'application/json'
         }
+      });
+  
+      if (response.status === 404) {
+        throw new Error('Новость не найдена на сервере');
+      }
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ошибка ${response.status}: ${errorText}`);
+      }
+  
+      const newsItem = await response.json();
+      if (!newsItem || !newsItem._id) {
+        throw new Error('Сервер вернул пустые данные');
+      }
+  
+      document.getElementById('newsTitle').value = newsItem.title || '';
+      document.getElementById('newsCategory').value = newsItem.category || '';
+      
+      const newsDate = newsItem.date ? new Date(newsItem.date) : new Date();
+      document.getElementById('newsDate').value = newsDate.toISOString().split('T')[0];
+      
+      document.getElementById('newsContent').value = newsItem.content || '';
+      currentNewsId = id;
+  
+      document.getElementById('newsModalTitle').textContent = 'Жаңылыкты түзөтүү';
+      document.getElementById('newsModal').style.display = 'flex';
+  
+    } catch (error) {
+      console.error('Полная ошибка:', {
+        message: error.message,
+        stack: error.stack,
+        id: id
+      });
+      alert(`Ошибка при открытии новости: ${error.message}`);
     }
-
+  }
     async function editTeacher(id) {
         try {
             const response = await fetch(`${API_BASE_URL}/api/teachers/${id}`);

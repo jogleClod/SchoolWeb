@@ -102,6 +102,26 @@ app.get('/api/news', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// Серверный код (app.js)
+app.get('/api/news/:id', async (req, res) => {
+  try {
+    // Проверяем валидность ID
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Неверный ID новости' });
+    }
+
+    const newsItem = await News.findById(req.params.id);
+    
+    if (!newsItem) {
+      return res.status(404).json({ error: 'Новость не найдена' });
+    }
+
+    res.json(newsItem);
+  } catch (err) {
+    console.error('Ошибка при получении новости:', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
 
 
 app.post('/api/news', upload.single('image'), async (req, res) => {
@@ -111,7 +131,7 @@ app.post('/api/news', upload.single('image'), async (req, res) => {
       content: req.body.content,
       category: req.body.category,
       date: req.body.date || new Date(),
-      image: req.file?.path
+      image: req.file?.secure_url  
     });
     await news.save();
     res.status(201).json(news);
@@ -200,7 +220,7 @@ app.post('/api/teachers', upload.single('photo'), async (req, res) => {
       bio: req.body.bio,
       experience: req.body.experience,
       education: req.body.education,
-      photo: req.file?.secure_url // ✅ Используем secure_url
+      photo: req.file?.secure_url 
     });
     
     await teacher.save();
