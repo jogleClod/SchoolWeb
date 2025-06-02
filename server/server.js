@@ -139,8 +139,34 @@ app.post('/api/news', upload.single('image'), async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+app.put('/api/news/:id', upload.single('image'), async (req, res) => {
+  try {
+    const updateData = {
+      title: req.body.title,
+      content: req.body.content,
+      category: req.body.category,
+      date: req.body.date || new Date()
+    };
 
-// Обновление преподавателя
+    if (req.file) {
+      updateData.image = req.file.secure_url; // Для Cloudinary
+    }
+
+    const updatedNews = await News.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    if (!updatedNews) {
+      return res.status(404).json({ error: 'Новость не найдена' });
+    }
+
+    res.json(updatedNews);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 // ОБНОВЛЕНИЕ ПРЕПОДАВАТЕЛЯ
 app.put('/api/teachers/:id', upload.single('photo'), async (req, res) => {
   try {
@@ -224,13 +250,12 @@ app.post('/api/teachers', upload.single('photo'), async (req, res) => {
     });
     
     await teacher.save();
-    res.status(201).json({ success: true, teacher });
+    res.status(201).json(teacher); 
   } catch (err) {
-    console.error('Ошибка при добавлении преподавателя:', err);
+    console.error('Ошибка:', err);
     res.status(400).json({ 
-      success: false, 
       error: err.message,
-      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 });

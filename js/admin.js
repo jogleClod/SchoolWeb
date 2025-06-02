@@ -141,7 +141,7 @@ async function loadTeachers() {
             <tr>
                 <td>${teacher._id}</td>
                 <td>
-                    ${teacher.photo ? `<img src="${teacher.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;">` : 'Нет фото'}
+                    ${teacher.photo  `<img src="${teacher.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;">`}
                 </td>
                 <td>${teacher.name}</td>
                 <td>${teacher.subject}</td>
@@ -232,6 +232,7 @@ async function saveTeacher() {
 
 async function editNews(id) {
     try {
+      // 1. Проверка ID
       if (!id) throw new Error('ID новости не указан');
   
       console.log('Пытаемся загрузить новость с ID:', id);
@@ -303,37 +304,66 @@ async function editNews(id) {
     }
 
     async function saveNews() {
-        const formData = new FormData();
-        formData.append('title', document.getElementById('newsTitle').value);
-        formData.append('category', document.getElementById('newsCategory').value);
-        formData.append('date', document.getElementById('newsDate').value);
-        formData.append('content', document.getElementById('newsContent').value);
+        // 1. Валидация обязательных полей
+        const title = document.getElementById('newsTitle').value;
+        const content = document.getElementById('newsContent').value;
         
-        const imageFile = document.getElementById('newsImage').files[0];
-        if (imageFile) formData.append('image', imageFile);
-        
-        try {
-            const url = currentNewsId 
-                ? `${API_BASE_URL}/api/news/${currentNewsId}`
-                : `${API_BASE_URL}/api/news`;
-            
-            const method = currentNewsId ? 'PUT' : 'POST';
-            
-            const response = await fetch(url, {
-                method,
-                body: formData
-            });
-            
-            if (!response.ok) throw new Error('Ошибка сохранения');
-            
-            document.getElementById('newsModal').style.display = 'none';
-            loadNews();
-            
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Ошибка при сохранении новости');
+        if (!title || !content) {
+          alert('Заполните обязательные поля: заголовок и содержание');
+          return;
         }
-    }
+      
+        // 2. Подготовка FormData
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        formData.append('category', document.getElementById('newsCategory').value);
+        formData.append('date', document.getElementById('newsDate').value || new Date());
+      
+        // 3. Добавление изображения если есть
+        const imageInput = document.getElementById('newsImage');
+        if (imageInput.files[0]) {
+          formData.append('image', imageInput.files[0]);
+        }
+      
+        try {
+          // 4. Определение URL и метода
+          const url = currentNewsId 
+            ? `${API_BASE_URL}/api/news/${currentNewsId}`
+            : `${API_BASE_URL}/api/news`;
+          
+          const method = currentNewsId ? 'PUT' : 'POST';
+      
+          // 5. Отправка запроса
+          const response = await fetch(url, {
+            method,
+            body: formData,
+            // headers НЕ нужны для FormData - браузер установит автоматически
+          });
+      
+          // 6. Обработка ответа
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(errorData?.error || `HTTP error! status: ${response.status}`);
+          }
+      
+          // 7. Успешное сохранение
+          const result = await response.json();
+          console.log('Успешно сохранено:', result);
+          
+          document.getElementById('newsModal').style.display = 'none';
+          loadNews(); // Обновляем список новостей
+          
+        } catch (error) {
+          console.error('Полная ошибка сохранения:', {
+            error: error.message,
+            stack: error.stack,
+            currentNewsId,
+            formData: [...formData.entries()] // Логируем данные формы
+          });
+          alert(`Ошибка сохранения: ${error.message}`);
+        }
+      }
 
   
     async function deleteNews(id) {
