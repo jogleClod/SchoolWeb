@@ -29,10 +29,10 @@ app.use((req, res, next) => {
 
 // Настройки CORS для разработки
 app.use(cors({
-    origin: ['https://n-saidiev-xd5k.onrender.com'], // Разрешаем оба варианта
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type']
-  }));
+  origin: ['https://n-saidiev-xd5k.onrender.com'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
   app.get('/ping', (req, res) => {
     res.send('pong');
@@ -133,7 +133,7 @@ app.put('/api/teachers/:id', upload.single('photo'), async (req, res) => {
     };
 
     if (req.file) {
-      updateData.photo = req.file.filename;
+      updateData.photo = req.file.secure_url; // ✅ Используем secure_url
     }
 
     const updatedTeacher = await Teacher.findByIdAndUpdate(
@@ -152,7 +152,6 @@ app.put('/api/teachers/:id', upload.single('photo'), async (req, res) => {
     res.status(500).json({ error: 'Ошибка сервера при обновлении' });
   }
 });
-
 // Получение всех студентов
 
 
@@ -189,12 +188,11 @@ app.get('/api/teachers/:id', async (req, res) => {
 });
 
 
-// Добавление преподавателя
 app.post('/api/teachers', upload.single('photo'), async (req, res) => {
   console.log('📥 POST /api/teachers');
   console.log('➡️ req.body:', req.body);
-  console.log('🖼 req.file:', req.file); // вот здесь будет вся информация от Cloudinary
-  
+  console.log('🖼 req.file:', req.file); // Проверьте, что здесь есть secure_url
+
   try {
     const teacher = new Teacher({
       name: req.body.name,
@@ -202,12 +200,12 @@ app.post('/api/teachers', upload.single('photo'), async (req, res) => {
       bio: req.body.bio,
       experience: req.body.experience,
       education: req.body.education,
-      photo: req.file?.path 
+      photo: req.file?.secure_url // ✅ Используем secure_url
     });
     
     await teacher.save();
     res.status(201).json({ success: true, teacher });
-  }  catch (err) {
+  } catch (err) {
     console.error('Ошибка при добавлении преподавателя:', err);
     res.status(400).json({ 
       success: false, 
@@ -221,13 +219,15 @@ app.post('/api/teachers', upload.single('photo'), async (req, res) => {
 // Удаление преподавателя
 app.delete('/api/teachers/:id', async (req, res) => {
   try {
-    await Teacher.findByIdAndDelete(req.params.id);
+    const deletedTeacher = await Teacher.findByIdAndDelete(req.params.id);
+    if (!deletedTeacher) {
+      return res.status(404).json({ error: 'Преподаватель не найден' });
+    }
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // Получение одного студента по ID
 app.get('/api/students/:id', async (req, res) => {

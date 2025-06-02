@@ -426,14 +426,19 @@ async function loadTeachers() {
             </tr>
         `).join('');
         
-        document.querySelectorAll('.teachers-table .btn-edit').forEach(btn => {
-            btn.addEventListener('click', () => editTeacher(btn.dataset.id));
-        });
-        
-        document.querySelectorAll('.teachers-table .btn-delete').forEach(btn => {
-            btn.addEventListener('click', () => deleteTeacher(btn.dataset.id));
-        });
-        
+        document.querySelectorAll('#teachersTableBody .btn-edit').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие
+        editTeacher(btn.dataset.id);
+    });
+});
+
+document.querySelectorAll('#teachersTableBody .btn-delete').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие
+        deleteTeacher(btn.dataset.id);
+    });
+});
     } catch (error) {
         console.error('Мугалимдерди жүктөөдө ката:', error);
         alert('Мугалимдерди жүктөө мүмкүн болбоду');
