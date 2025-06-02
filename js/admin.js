@@ -141,7 +141,7 @@ async function loadTeachers() {
             <tr>
                 <td>${teacher._id}</td>
                 <td>
-                    ${teacher.photo  `<img src="${teacher.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;">`}
+                    ${teacher.photo ? `<img src="${teacher.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;">` : 'Нет фото'}
                 </td>
                 <td>${teacher.name}</td>
                 <td>${teacher.subject}</td>
@@ -157,7 +157,7 @@ async function loadTeachers() {
             </tr>
         `).join('');
         
-        // Навешиваем обработчики с уникальными классами
+        // Навешиваем обработчики
         document.querySelectorAll('.teacher-edit').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -177,7 +177,6 @@ async function loadTeachers() {
         alert('Ошибка при загрузке преподавателей');
     }
 }
-
 // Сохранение преподавателя (исправленная версия)
 async function saveTeacher() {
     const name = document.getElementById('teacherName').value;
