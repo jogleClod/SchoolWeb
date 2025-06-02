@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
             tbody.innerHTML = news.map(item => `
                 <tr>
                     <td>${item._id}</td>
-                    <td>${item.image ? `<img src="${API_BASE_URL}/uploads/${item.image}" style="width:60px;height:40px;object-fit:cover;">` : 'Нет фото'}</td>
+                    <td>${item.image ? `<img src="${news.image}" style="width:60px;height:40px;object-fit:cover;">` : 'Нет фото'}</td>
                     <td>${item.title}</td>
                     <td>${new Date(item.date).toLocaleDateString()}</td>
                     <td>${item.category}</td>
@@ -128,45 +128,107 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    async function loadTeachers() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/teachers`);
-            if (!response.ok) throw new Error('Ошибка загрузки преподавателей');
-            
-            const teachers = await response.json();
-            const tbody = document.getElementById('teachersTableBody');
-            
-            tbody.innerHTML = teachers.map(teacher => `
-                <tr>
-                    <td>${teacher._id}</td>
-                    <td>${teacher.photo ? `<img src="${API_BASE_URL}/uploads/${teacher.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;">` : 'Нет фото'}</td>
-                    <td>${teacher.name}</td>
-                    <td>${teacher.subject}</td>
-                    <td>${teacher.experience}</td>
-                    <td>
-                        <button class="btn btn-edit" data-id="${teacher._id}"><i class="fas fa-edit"></i> Түзөтүү</button>
-                        <button class="btn btn-delete" data-id="${teacher._id}"><i class="fas fa-trash"></i> Өчүрүү</button>
-                    </td>
-                </tr>
-            `).join('');
-            
-            // Помечаем секцию как загруженную
-            document.getElementById('teachers-section').dataset.loaded = 'true';
-            
-            // Навешиваем обработчики
-            document.querySelectorAll('.teachers-table .btn-edit').forEach(btn => {
-                btn.addEventListener('click', () => editTeacher(btn.dataset.id));
+  // Загрузка преподавателей (исправленная версия)
+async function loadTeachers() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/teachers`);
+        if (!response.ok) throw new Error('Ошибка загрузки преподавателей');
+        
+        const teachers = await response.json();
+        const tbody = document.getElementById('teachersTableBody');
+        
+        tbody.innerHTML = teachers.map(teacher => `
+            <tr>
+                <td>${teacher._id}</td>
+                <td>
+                    ${teacher.photo ? `<img src="${teacher.photo}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;">` : 'Нет фото'}
+                </td>
+                <td>${teacher.name}</td>
+                <td>${teacher.subject}</td>
+                <td>${teacher.experience}</td>
+                <td>
+                    <button class="btn teacher-edit" data-id="${teacher._id}">
+                        <i class="fas fa-edit"></i> Түзөтүү
+                    </button>
+                    <button class="btn teacher-delete" data-id="${teacher._id}">
+                        <i class="fas fa-trash"></i> Өчүрүү
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+        
+        // Навешиваем обработчики с уникальными классами
+        document.querySelectorAll('.teacher-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                editTeacher(btn.dataset.id);
             });
-            
-            document.querySelectorAll('.teachers-table .btn-delete').forEach(btn => {
-                btn.addEventListener('click', () => deleteTeacher(btn.dataset.id));
+        });
+        
+        document.querySelectorAll('.teacher-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteTeacher(btn.dataset.id);
             });
-            
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Ошибка при загрузке преподавателей');
-        }
+        });
+        
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Ошибка при загрузке преподавателей');
     }
+}
+
+// Сохранение преподавателя (исправленная версия)
+async function saveTeacher() {
+    const name = document.getElementById('teacherName').value;
+    const subject = document.getElementById('teacherSubject').value;
+    
+    if (!name || !subject) {
+        alert('Пожалуйста, заполните обязательные поля (Имя и Предмет)');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('subject', subject);
+    formData.append('experience', document.getElementById('teacherExperience').value);
+    formData.append('education', document.getElementById('teacherEducation').value);
+    formData.append('bio', document.getElementById('teacherBio').value);
+    
+    const photoFile = document.getElementById('teacherPhoto').files[0];
+    if (photoFile) {
+        if (!photoFile.type.startsWith('image/')) {
+            alert('Пожалуйста, выберите файл изображения');
+            return;
+        }
+        formData.append('photo', photoFile);
+    }
+
+    try {
+        const url = currentTeacherId 
+            ? `${API_BASE_URL}/api/teachers/${currentTeacherId}`
+            : `${API_BASE_URL}/api/teachers`;
+        
+        const method = currentTeacherId ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method,
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(errorData?.error || 'Ошибка сохранения');
+        }
+        
+        document.getElementById('teacherModal').style.display = 'none';
+        loadTeachers();
+        
+    } catch (error) {
+        console.error('Ошибка сохранения:', error);
+        alert(`Ошибка: ${error.message}`);
+    }
+}
 
     async function editNews(id) {
         try {
@@ -250,40 +312,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    async function saveTeacher() {
-        const formData = new FormData();
-        formData.append('name', document.getElementById('teacherName').value);
-        formData.append('subject', document.getElementById('teacherSubject').value);
-        formData.append('experience', document.getElementById('teacherExperience').value);
-        formData.append('education', document.getElementById('teacherEducation').value);
-        formData.append('bio', document.getElementById('teacherBio').value);
-        
-        const photoFile = document.getElementById('teacherPhoto').files[0];
-        if (photoFile) formData.append('photo', photoFile);
-        
-        try {
-            const url = currentTeacherId 
-                ? `${API_BASE_URL}/api/teachers/${currentTeacherId}`
-                : `${API_BASE_URL}/api/teachers`;
-            
-            const method = currentTeacherId ? 'PUT' : 'POST';
-            
-            const response = await fetch(url, {
-                method,
-                body: formData
-            });
-            
-            if (!response.ok) throw new Error('Ошибка сохранения');
-            
-            document.getElementById('teacherModal').style.display = 'none';
-            loadTeachers();
-            
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Ошибка при сохранении преподавателя');
-        }
-    }
-
+  
     async function deleteNews(id) {
         if (!confirm('Бул жаңылыкты чын эле өчүрүүнү каалайсызбы?')) return;
         
