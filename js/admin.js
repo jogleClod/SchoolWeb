@@ -141,9 +141,9 @@ async function loadTeachers() {
             <tr>
                 <td>${teacher._id}</td>
                 <td>
-                <img src="${teacher.photo || 'путь/к/дефолтному/изображению.jpg'}" 
+                <img src="${teacher.photo || ''}" 
                          style="width:60px;height:60px;border-radius:50%;object-fit:cover;"
-                         onerror="this.src='путь/к/дефолтному/изображению.jpg'">
+                         onerror="this.src=''">
 
                 </td>
                 <td>${teacher.name}</td>
@@ -306,64 +306,51 @@ async function editNews(id) {
     }
 
     async function saveNews() {
-        // 1. Валидация обязательных полей
-        const title = document.getElementById('newsTitle').value;
-        const content = document.getElementById('newsContent').value;
-        
-        if (!title || !content) {
-          alert('Заполните обязательные поля: заголовок и содержание');
-          return;
-        }
-      
-        // 2. Подготовка FormData
+        // 1. Создаём FormData
         const formData = new FormData();
-        formData.append('title', title);
-        formData.append('content', content);
+        formData.append('title', document.getElementById('newsTitle').value);
+        formData.append('content', document.getElementById('newsContent').value);
         formData.append('category', document.getElementById('newsCategory').value);
         formData.append('date', document.getElementById('newsDate').value || new Date());
       
-        // 3. Добавление изображения если есть
-        const imageInput = document.getElementById('newsImage');
-        if (imageInput.files[0]) {
-          formData.append('image', imageInput.files[0]);
+        // 2. Добавляем файл если есть
+        const imageFile = document.getElementById('newsImage').files[0];
+        if (imageFile) {
+          // Проверяем тип файла
+          if (!['image/jpeg', 'image/png'].includes(imageFile.type)) {
+            alert('Разрешены только JPG/PNG изображения');
+            return;
+          }
+          formData.append('image', imageFile);
         }
       
         try {
-          // 4. Определение URL и метода
+          // 3. Определяем URL и метод
           const url = currentNewsId 
             ? `${API_BASE_URL}/api/news/${currentNewsId}`
             : `${API_BASE_URL}/api/news`;
           
-          const method = currentNewsId ? 'PUT' : 'POST';
-      
-          // 5. Отправка запроса
+          // 4. Отправляем запрос
           const response = await fetch(url, {
-            method,
+            method: currentNewsId ? 'PUT' : 'POST',
             body: formData,
-            // headers НЕ нужны для FormData - браузер установит автоматически
+            // Не устанавливаем Content-Type вручную!
           });
       
-          // 6. Обработка ответа
           if (!response.ok) {
-            const errorData = await response.json().catch(() => null);
-            throw new Error(errorData?.error || `HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(errorText || 'Ошибка сервера');
           }
       
-          // 7. Успешное сохранение
-          const result = await response.json();
-          console.log('Успешно сохранено:', result);
-          
           document.getElementById('newsModal').style.display = 'none';
-          loadNews(); // Обновляем список новостей
-          
+          loadNews(); 
+      
         } catch (error) {
-          console.error('Полная ошибка сохранения:', {
+          console.error('Ошибка сохранения:', {
             error: error.message,
-            stack: error.stack,
-            currentNewsId,
-            formData: [...formData.entries()] // Логируем данные формы
+            stack: error.stack
           });
-          alert(`Ошибка сохранения: ${error.message}`);
+          alert(`Ошибка: ${error.message}`);
         }
       }
 
