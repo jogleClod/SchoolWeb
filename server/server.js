@@ -11,11 +11,10 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 cloudinary.config({
-  cloud_name: 'dwt6otwdm',     // замени на свое
-  api_key: '188289595742432',           // замени на свое
-  api_secret: 'abTsWlbv-pxuJaQqhg_pyKKhQQk'      // замени на свое
+  cloud_name: 'dwt6otwdm',  
+  api_key: '188289595742432',       
+  api_secret: 'abTsWlbv-pxuJaQqhg_pyKKhQQk'     
 });
-// Логируем каждый запрос
 app.use((req, res, next) => {
   console.log(`\n[${new Date().toISOString()}] ${req.method} ${req.url}`);
   if (req.method !== 'GET') {
@@ -27,7 +26,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Настройки CORS для разработки
 app.use(cors({
   origin: ['https://n-saidiev-xd5k.onrender.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -38,12 +36,10 @@ app.use(cors({
     res.send('pong');
   });
   
-// Подключение MongoDB
 mongoose.connect('mongodb+srv://bigenemy24:mqQLZXM0Tpa0RZGB@cluster0.7z0okmy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Модель новости
 const News = mongoose.model('News', {
   title: String,
   content: String,
@@ -51,7 +47,6 @@ const News = mongoose.model('News', {
   date: Date,
   image: String
 });
-// Модель преподавателя
 const Teacher = mongoose.model('Teacher', {
   name: String,
   subject: String,
@@ -81,7 +76,6 @@ app.get('/api/students', async (req, res) => {
 
 
 
-// Настройка загрузки файлов
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: (req, file) => ({
@@ -93,7 +87,6 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 
-// API Endpoints
 app.get('/api/news', async (req, res) => {
   try {
     const news = await News.find().sort({ date: -1 });

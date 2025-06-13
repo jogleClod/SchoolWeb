@@ -3,13 +3,12 @@ document.addEventListener("DOMContentLoaded", function() {
     let currentNewsId = null;
     let currentTeacherId = null;
 
-    // Инициализация приложения
     initApp();
 
     function initApp() {
         initMenuNavigation();
         initModals();
-        loadNews(); // Загружаем новости по умолчанию
+        loadNews();
     }
 
     function initMenuNavigation() {
@@ -18,31 +17,25 @@ document.addEventListener("DOMContentLoaded", function() {
         menuLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                
-                // Обновляем активный пункт меню
+ 
                 menuLinks.forEach(item => item.classList.remove('active'));
                 this.classList.add('active');
                 
-                // Получаем название секции
                 const section = this.dataset.section;
                 
-                // Переключаем секции
                 switchSection(section);
             });
         });
     }
 
     function switchSection(section) {
-        // Скрываем все секции
         document.querySelectorAll('.content-section').forEach(section => {
             section.classList.remove('active');
         });
         
-        // Показываем нужную секцию
         const activeSection = document.getElementById(`${section}-section`);
         activeSection.classList.add('active');
         
-        // Загружаем данные при необходимости
         if (section === 'news' && !activeSection.dataset.loaded) {
             loadNews();
         } else if (section === 'teachers' && !activeSection.dataset.loaded) {
@@ -51,7 +44,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function initModals() {
-        // Инициализация модального окна новостей
         const newsModal = document.getElementById('newsModal');
         document.getElementById('addNewsBtn').addEventListener('click', () => {
             document.getElementById('newsModalTitle').textContent = 'Жаңы жаңылык кошуу';
@@ -60,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
             newsModal.style.display = 'flex';
         });
 
-        // Инициализация модального окна преподавателей
         const teacherModal = document.getElementById('teacherModal');
         document.getElementById('addTeacherBtn').addEventListener('click', () => {
             document.getElementById('teacherModalTitle').textContent = 'Мугалим кошуу';
@@ -69,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function() {
             teacherModal.style.display = 'flex';
         });
 
-        // Закрытие модальных окон
         document.querySelectorAll('.close-modal, #cancelNewsBtn, #cancelTeacherBtn').forEach(btn => {
             btn.addEventListener('click', () => {
                 newsModal.style.display = 'none';
@@ -77,13 +67,11 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-        // Закрытие при клике вне окна
         window.addEventListener('click', (e) => {
             if (e.target === newsModal) newsModal.style.display = 'none';
             if (e.target === teacherModal) teacherModal.style.display = 'none';
         });
 
-        // Обработчики сохранения
         document.getElementById('saveNewsBtn').addEventListener('click', saveNews);
         document.getElementById('saveTeacherBtn').addEventListener('click', saveTeacher);
     }
@@ -110,10 +98,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 </tr>
             `).join('');
             
-            // Помечаем секцию как загруженную
             document.getElementById('news-section').dataset.loaded = 'true';
             
-            // Навешиваем обработчики
             document.querySelectorAll('.news-table .btn-edit').forEach(btn => {
                 btn.addEventListener('click', () => editNews(btn.dataset.id));
             });
@@ -127,8 +113,6 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Ошибка при загрузке новостей');
         }
     }
-
-  // Загрузка преподавателей (исправленная версия)
 async function loadTeachers() {
     try {
         const response = await fetch(`${API_BASE_URL}/api/teachers`);
@@ -160,7 +144,6 @@ async function loadTeachers() {
             </tr>
         `).join('');
         
-        // Навешиваем обработчики
         document.querySelectorAll('.teacher-edit').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -180,7 +163,6 @@ async function loadTeachers() {
         alert('Ошибка при загрузке преподавателей');
     }
 }
-// Сохранение преподавателя (исправленная версия)
 async function saveTeacher() {
     const name = document.getElementById('teacherName').value;
     const subject = document.getElementById('teacherSubject').value;
@@ -234,7 +216,6 @@ async function saveTeacher() {
 
 async function editNews(id) {
     try {
-      // 1. Проверка ID
       if (!id) throw new Error('ID новости не указан');
   
       console.log('Пытаемся загрузить новость с ID:', id);
@@ -287,7 +268,6 @@ async function editNews(id) {
             
             const teacher = await response.json();
             
-            // Заполняем форму
             document.getElementById('teacherName').value = teacher.name;
             document.getElementById('teacherSubject').value = teacher.subject;
             document.getElementById('teacherExperience').value = teacher.experience;
@@ -295,7 +275,6 @@ async function editNews(id) {
             document.getElementById('teacherBio').value = teacher.bio;
             currentTeacherId = id;
             
-            // Показываем модальное окно
             document.getElementById('teacherModalTitle').textContent = 'Мугалимди түзөтүү';
             document.getElementById('teacherModal').style.display = 'flex';
             
@@ -306,7 +285,6 @@ async function editNews(id) {
     }
 
     async function saveNews() {
-        // 1. Создаём FormData
         const formData = new FormData();
         formData.append('title', document.getElementById('newsTitle').value);
         formData.append('content', document.getElementById('newsContent').value);
